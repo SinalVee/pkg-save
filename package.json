@@ -1,0 +1,26 @@
+{
+  "name": "pkg-save",
+  "version": "1.0.0",
+  "description": "Save installed package(s) to package.json",
+  "bin": {
+    "pkg-save": "./bin/pkg-save"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "npm",
+    "save",
+    "package",
+    "version"
+  ],
+  "author": "SinalVee <sinalvee@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SinalVee/pkg-save.git"
+  },
+  "dependencies": {
+    "yargs": "^4.3.1"
+  }
+}

@@ -1,0 +1,117 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var fs = require('fs');
+var path = require('path');
+var argv = require('yargs')
+    .usage('Usage: $0 <name> [option]')
+    .example('pkg-save lodash', 'Save lodash to dependencies')
+    .example('pkg-save lodash --dev', 'Save lodash to devDependencies')
+    .example('pkg-save lodash mocha', 'Save lodash and mocha to dependencies')
+    .example('pkg-save lodash mocha --dev', 'Save lodash and mocha to devDependencies')
+    .boolean('d')
+    .alias('d', 'dev')
+    .describe('d', 'Save package to devDependencies')
+    .help('h')
+    .alias('h', 'help')
+    .alias('v', 'version')
+    .version(function () {
+      return require('../package.json').version;
+    }).argv;
+
+var pwd = process.cwd();
+var pkgNames = argv._;
+var pkgs = {};
+
+pkgNames.forEach(function (pkgName) {
+  pkgs[pkgName] = getPkgVersion(pkgName);
+});
+
+saveDeps(pkgs);
+
+/**
+ * read file and write file
+ * 
+ * @param {Object} pkgs - packages object to be saved
+ */
+function saveDeps (pkgs) {
+  fs.readFile(path.resolve(pwd, 'package.json'), function (err, data) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    var pkgObj = JSON.parse(data);
+
+    if (argv.dev) {
+      pkgObj.devDependencies = addPkgsToDepObj(pkgs, pkgJson.devDependencies || {});
+    } else {
+      pkgObj.dependencies = addPkgsToDepObj(pkgs, pkgJson.dependencies || {});
+    }
+
+    var pkgStr = JSON.stringify(pkgObj, null, 2) + '\n';
+
+    fs.writeFile(path.resolve(pwd, 'package.json'), pkgStr, function (err) {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+
+      Object.keys(sortObject(pkgs)).forEach(function (key) {
+        console.log(key + '@' + pkgs[key]);
+      });
+    });
+  });
+}
+
+/**
+ * add package info to dependencies object and sort by keys
+ *
+ * @param {Object} pkgs - packages object to be added
+ * @param {Object} depObj - dependencies object
+ * @return {Object} sortedDepObj - sorted dependencies object after added packages
+ */
+function addPkgsToDepObj (pkgs, depObj) {
+  Object.keys(pkgs).forEach(function (key) {
+    depObj[key] = pkgs[key];
+  });
+
+  return sortObject(depObj);
+}
+
+/**
+ * get package version from node_modules/packageName/package.json
+ *
+ * @param {String} pkgName - package name
+ * @return {String} version - package version
+ */
+function getPkgVersion (pkgName) {
+  var pkgPath = path.resolve(pwd, 'node_modules', pkgName, 'package.json');
+  var pkg;
+
+  if (fs.existsSync(pkgPath)) {
+    pkg = require(pkgPath);
+  } else {
+    console.error((new Error('Cannot find package "' + pkgName + '" in node_modules')).stack);
+    process.exit(1);
+  }
+
+  return pkg.version;
+}
+
+/**
+ * sort object by keys
+ *
+ * @param {Object} obj - object to be sorted
+ * @return {Object} sortedObj - sorted object
+ */
+function sortObject (obj) {
+  var sortedObj = {};
+
+  Object.keys(obj).sort().forEach(function (key) {
+    sortedObj[key] = obj[key];
+  });
+
+  return sortedObj;
+}
