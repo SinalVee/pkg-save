@@ -32,7 +32,7 @@ saveDeps(pkgs);
 
 /**
  * read file and write file
- * 
+ *
  * @param {Object} pkgs - packages object to be saved
  */
 function saveDeps (pkgs) {
@@ -45,9 +45,9 @@ function saveDeps (pkgs) {
     var pkgObj = JSON.parse(data);
 
     if (argv.dev) {
-      pkgObj.devDependencies = addPkgsToDepObj(pkgs, pkgJson.devDependencies || {});
+      pkgObj.devDependencies = addPkgsToDepObj(pkgs, pkgObj.devDependencies || {});
     } else {
-      pkgObj.dependencies = addPkgsToDepObj(pkgs, pkgJson.dependencies || {});
+      pkgObj.dependencies = addPkgsToDepObj(pkgs, pkgObj.dependencies || {});
     }
 
     var pkgStr = JSON.stringify(pkgObj, null, 2) + '\n';

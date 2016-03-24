@@ -1,6 +1,6 @@
 {
   "name": "pkg-save",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Save installed package(s) to package.json",
   "bin": {
     "pkg-save": "./bin/pkg-save"
