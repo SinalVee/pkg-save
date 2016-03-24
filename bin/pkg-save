@@ -25,7 +25,7 @@ var pkgNames = argv._;
 var pkgs = {};
 
 pkgNames.forEach(function (pkgName) {
-  pkgs[pkgName] = getPkgVersion(pkgName);
+  pkgs[pkgName] = '^' + getPkgVersion(pkgName);
 });
 
 saveDeps(pkgs);
